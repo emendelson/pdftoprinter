@@ -821,7 +821,7 @@ Func getfilematched($pdffile, $irecur, $pth = @ScriptDir)
 	Else
 		Return SetError(2, 0, "Error: [path]Filename must end with .pdf, but filename supports wildcard * and ?(path does not support wildcards.)")
 		$code = 11
-		Exit $coode
+		Exit $code
 	EndIf
 	If $aArray = "" Then
 		Return SetError(3, 0, "No pdf file matched.")
