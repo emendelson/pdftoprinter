@@ -31,6 +31,7 @@ Global $debug = 0
 Global $printername
 Global $defaultprinter
 Global $gh
+Global $code
 
 Local $pth = @WorkingDir
 If StringRight($pth, 1) = "\" Then $pth = StringTrimRight($pth, 1) ;Working directory is disk root, C:\
@@ -112,7 +113,8 @@ If $cmln = 0 Then    ;If no paramters given
 				 & @CRLF & @CRLF & "/p:password   Provides password to pdf." _
 				 & @CRLF & @CRLF & "/debug   Copies print command to Windows clipboard.")
 	EndIf
-	Exit
+	$code = 1
+	Exit $code
 EndIf
 
 
@@ -133,7 +135,8 @@ If UBound($printerlist) = 0 And $mock = 0 Then
 	Else
 		ConsoleWrite("No printer found.")
 	EndIf
-	Exit
+	$code = 2
+	Exit $code
 EndIf
 
 ; Parse command-line parameters.
@@ -156,7 +159,8 @@ If $cmln >= 1 Then
 				Else
 					ConsoleWrite("The copies= parameter must use an integer.")
 				EndIf
-				Exit
+				$code = 3
+				Exit $code
 			EndIf
 			$copies = Abs($copies) ; negative integer is interger too.
 		ElseIf StringLower(StringLeft($CmdLine[$x], 6)) = "focus=" Then ; return Focus
@@ -180,7 +184,8 @@ If $cmln >= 1 Then
 					Else
 						ConsoleWrite("For /Rx x must be number")
 					EndIf
-					Exit
+					$code = 4
+					Exit $code
 				EndIf
 			EndIf
 		ElseIf StringLower(StringLeft($CmdLine[$x], 3)) = "/p:" Then
@@ -217,7 +222,8 @@ If $printervalid = 0 Then
 	Else
 		ConsoleWrite("Printer name """ & $printername & """ not found or argument """ & $printername & """is not valid.")
 	EndIf
-	Exit
+	$code = 5
+	Exit $code
 EndIf
 
 
@@ -228,7 +234,8 @@ If $pdffile = "" Then
 	Else
 		ConsoleWrite("Wrong arguments: no [path]filename with .pdf extension provided.")
 	EndIf
-	Exit
+	$code = 6
+	Exit $code
 EndIf
 
 ; get pdf file list
@@ -240,7 +247,8 @@ If $recurLevel <= 1 Then
 		Else
 			ConsoleWrite($pdffiles)
 		EndIf
-		Exit
+		$code = 7
+		Exit $code
 	EndIf
 Else
 	Local $pdffiles[2]
@@ -525,8 +533,9 @@ EndIf
 ;DeleteFile($myDir & "\qpdf28.dll")
 ;DeleteFile($myDir & "\resource.dat")
 ;DeleteFile($myDir & "\settings.dat")
+$aArray
 
-Exit    ;main script ends here.
+Exit     ;main script ends here.
 
 Func _ArrayToCSV($aArray, $sDelim = Default, $sNewLine = Default, $bFinalBreak = True)
 	; #FUNCTION# ====================================================================================================================
@@ -587,7 +596,8 @@ Func DeleteFile($file) ; è unito con  _Spediamo_it_CSV()
 	If $file_usage = -1 Then
 		MsgBox(0, @ScriptName, $file & " is in use." & @CRLF & _
 				'Please close it before continuing.')
-		Exit
+		$code = 8
+		Exit $code
 	EndIf
 
 	FileClose($file_usage)
@@ -700,7 +710,8 @@ Func Handle_MultipleInstance()
 		Else
 			ConsoleWrite($sMsgBoxMsg)
 		EndIf
-		Exit
+		$code = 9
+		Exit $code
 	EndIf
 EndFunc   ;==>Handle_MultipleInstance
 
@@ -871,11 +882,13 @@ Func getfilematched($pdffile, $irecur, $pth = @ScriptDir)
 			$aArray = _FileListToArrayRec($pth, $filter, $FLTAR_FILES, $irecur, $FLTAR_NOSORT, $FLTAR_FULLPATH)
 		Else
 			Return SetError(1, 0, "getfilematched($pdffile,$irecur). Unsupported $irecur, only 0 or 1 or negative integer number are supported.")
-			Exit
+			$code = 10
+			Exit $code
 		EndIf
 	Else
-		Return SetError(2, 0, "Error: [path]Filename must be ended with .pdf, but filename support wildcard * and ?(path does not support wildcards.)")
-		Exit
+		Return SetError(2, 0, "Error: [path]Filename must end with .pdf, but filename supports wildcard * and ?(path does not support wildcards.)")
+		$code = 11
+		Exit $coode
 	EndIf
 	If $aArray = "" Then
 		Return SetError(3, 0, "No pdf file matched.")
