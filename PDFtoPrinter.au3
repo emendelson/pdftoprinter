@@ -39,7 +39,6 @@ Local $noprinter = 0
 Local $space = " "
 Local $qt = Chr(34)
 Local $pdffile = ""
-; Local $basestring = "" ;What this for?
 Local $showselptr = 0
 Local $pgvar = " "
 Local $copies = 1
@@ -47,11 +46,11 @@ Local $focus = ""
 Local $printstring
 Local $recurLevel = 1 ;Recur all files matching filename in this folder.
 Local $password = ""
-Local $csv = 0 ; Wether output csv.
-Local $silent = 0 ;Do not popup error or warning or password window.
+Local $csv = 0 ; Change to 1 to output csv.
+Local $silent = 0 ; Do not popup error or warning or password window.
 Local $mock = 0 ; Really print or just simulate.
 Local $pageselector = 0 ; no page selector
-Local $pdfgiven = 0 ;what if a printer name ended with .pdf? deal with it.
+Local $pdfgiven = 0 ; What if a printfile name ends with .pdf? deal with it.
 Local $printervalid = 1
 Local $pageselector = ""
 
@@ -222,7 +221,7 @@ If $printervalid = 0 Then
 EndIf
 
 
-; if no pdf file name given:
+; if no pdf filename given:
 If $pdffile = "" Then
 	If $cli = 0 Then
 		MsgBox(0, $msgTitle, "Wrong arguments: no [path]filename with .pdf extension provided.")
@@ -256,7 +255,6 @@ Local $custom = 0
 If FileExists($pth & "\PDF-Xchange Viewer Settings.dat") Then $custom = 2
 If FileExists(@ScriptDir & "\PDF-Xchange Viewer Settings.dat") Then $custom = 1
 
-
 ; extract PDFXChange Viewer and settings.dat and qpdf28.dll ... to %temp% directory.
 Local $myDir = @TempDir & "\PDFPrinterTmp"
 DirCreate($myDir)
@@ -274,7 +272,6 @@ Else
 	FileInstall("d:\dropbox\pdftoprinter\Settings.dat", $myDir & "\settings.dat", 1)
 EndIf
 
-
 $errors = "" ; variable to collect error information.
 
 Local $summary[1][12] ; array variable to collect information for CSV.
@@ -283,7 +280,6 @@ Local $summary[1][12] ; array variable to collect information for CSV.
 $tmpstr = "Index, Filepath, Filename, Datetime, IsEntrypted, PageCount, Command string executed(can be used for bat), Page selector, Total pages selected, Copies,Result(assume all actions reqiuring human interaction is successful even you cancelled the password input window.), Error info"
 
 _ArrayInsert($summary, 0, $tmpstr, 0, ",")
-
 
 ; loop all matching pdf files
 For $i = 1 To $pdffiles[0]
@@ -407,7 +403,6 @@ For $i = 1 To $pdffiles[0]
 				_ArrayInsert($summary, $i, $tmpstr, 0, @CRLF, @TAB)
 				ContinueLoop 2
 			EndIf
-			; $basestring = StringLeft($pdffiles[$i], StringLen($pdffiles[$i]) - 3) ;what this for?
 		Next
 
 	Else ;if printer is not specified in commandline, use default or let user select printer
@@ -488,7 +483,6 @@ For $i = 1 To $pdffiles[0]
 				ContinueLoop
 			EndIf
 		EndIf
-		; $basestring = StringLeft($pdffiles[$i], StringLen($pdffiles[$i]) - 3) ; what this for?
 
 	EndIf
 	If UBound($summary) = $i + 1 Then ; no error occured earlier; otherwise loop is skipped.
@@ -496,7 +490,7 @@ For $i = 1 To $pdffiles[0]
 		_ArrayInsert($summary, $i, $tmpstr, 0, @CRLF, @TAB)
 	EndIf
 
-	;script name has string "debug".
+	; script name has string "debug".
 	If $debug = 1 Then
 		ClipPut($qt & $myDir & "\PDFXCview.exe" & $qt & $printstring & _
 				" " & $qt & $pdffiles[$i] & $qt)
@@ -533,10 +527,6 @@ EndIf
 ;DeleteFile($myDir & "\settings.dat")
 
 Exit    ;main script ends here.
-
-
-
-
 
 Func _ArrayToCSV($aArray, $sDelim = Default, $sNewLine = Default, $bFinalBreak = True)
 	; #FUNCTION# ====================================================================================================================
@@ -759,7 +749,6 @@ Func parsepage($pagestr, $pagecount = 3000)
 		Return $finaloutput
 	EndIf
 EndFunc   ;==>parsepage
-
 
 Func splitexpand($str, $pagecount = 3000)
 	;deal with z-1 and so on.
