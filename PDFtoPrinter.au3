@@ -58,63 +58,39 @@ Local $pageselector = ""
 
 Opt("WinTitleMatchMode", -2)
 
-If Not StringInStr($fn, "m") Then
+If Not ExecutableNameFlag("m") Then
 	Handle_MultipleInstance()
 EndIf
-If StringInStr($fn, "select") Then $showselptr = 1 ;Printer selection GUI popup
-If StringInStr($fn, "debug") Then $debug = 1
-If StringInStr($fn, "cli") Then $cli = 1 ;Commandline interface only, no gui window
+
+If ExecutableNameFlag("select") Then $showselptr = 1 ;Printer selection GUI popup
+If ExecutableNameFlag("debug") Then $debug = 1
+If ExecutableNameFlag("cli") Then $cli = 1 ;Commandline interface only, no gui window
 
 Local $cmln = $CmdLine[0] ;Total commandline parameters entered.
 If $cmln = 0 Then    ;If no paramters given
-	If $cli = 0 Then    ;If commandline interface
-		MsgBox(0, $msgTitle, "Usage:" & @CRLF & @CRLF _
-				 & "PDFtoPrinter.exe [path\]filename.pdf [" & $qt & "printer name" & _
-				$qt & "] [pages=#-#] [copies=#] [focus=" & $qt & "Window title" & $qt & "] [/debug] [/r] [/R[x]] [/s] [/p:password] [/csv] [/mock]" _
-				 & @CRLF & @CRLF & "Use quotation marks around [path\]filename with spaces. " _
-				 & "OK to use relative path and filename-wildcards (* and ?)." _
-				 & @CRLF & @CRLF & "Default printer is used unless printer name is specified." _
-				 & @CRLF & @CRLF & "Rename to PDFtoPrinterSelect.exe for select-printer menu." _
-				 & @CRLF & "(menu does not appear if printer name is specified)." _
-				 & @CRLF & @CRLF & "Page-range examples: 3 [or] 2-4,6,8-9 [or] " _
-				 & "8- [or] z-1 for reverse-print [or] z-1:odd|even reverse-print odd/even pages [or] " _
-				 & "r5-r2 for 5th-to-last to 2nd-to-last page." _
-				 & @CRLF & @CRLF & "focus=   Restores focus to specified window title." _
-				 & @CRLF & @CRLF & "/r   Recursive directory listing (this folder only, " _
-				 & "default when filename includes wildcard)." _
-				 & @CRLF & @CRLF & "/s   Run silently; disable user interaction and focus=" _
-				 & @CRLF & @CRLF & "/csv   Generate csv file listing file(s) printed. " _
-				 & "CSV file written to %temp%\pdftoprintertmp." _
-				 & @CRLF & @CRLF & "/mock   Generate csv file only; don't print PDF files." _
-				 & @CRLF & @CRLF & "/Rn   Recursive directory listing to n depth of subfolders; " _
-				 & "if n is absent, recurs through all subfolders." _
-				 & @CRLF & @CRLF & "/p:password   Provides password to pdf." _
-				 & @CRLF & @CRLF & "/debug   Copies print command to Windows clipboard.")
-	Else
-		ConsoleWrite("Usage: PDFtoPrinter.exe [path\]filename.pdf [" & $qt & "printer name" & _
-				$qt & "] [pages=#-#] [copies=#] [focus=" & $qt & "Window title" & $qt & "] [/debug] [/r] [/R[x]] [/s] [/p:password] [/csv] [/mock]" _
-				 & @CRLF & @CRLF & "Use quotation marks around [path\]filename with spaces. " _
-				 & "OK to use relative path and filename-wildcards (* and ?)." _
-				 & @CRLF & @CRLF & "Default printer is used unless printer name is specified." _
-				 & @CRLF & @CRLF & "Rename to PDFtoPrinterSelect.exe for select-printer menu." _
-				 & @CRLF & "(menu does not appear if printer name is specified)." _
-				 & @CRLF & @CRLF & "Page-range examples: 3 [or] 2-4,6,8-9 [or] " _
-				 & "8- [or] z-1 for reverse-print [or] z-1:odd|even reverse-print odd/even pages [or] " _
-				 & "r5-r2 for 5th-to-last to 2nd-to-last page." _
-				 & @CRLF & @CRLF & "focus=   Restores focus to specified window title." _
-				 & @CRLF & @CRLF & "/r   Recursive directory listing (this folder only, " _
-				 & "default when filename includes wildcard)." _
-				 & @CRLF & @CRLF & "/s   Run silently; disable user interaction and focus=" _
-				 & @CRLF & @CRLF & "/csv   Generate csv file listing file(s) printed. " _
-				 & "CSV file written to %temp%\pdftoprintertmp." _
-				 & @CRLF & @CRLF & "/mock   Generate csv file only; don't print PDF files." _
-				 & @CRLF & @CRLF & "/Rn   Recursive directory listing to n depth of subfolders; " _
-				 & "if n is absent, recurs through all subfolders." _
-				 & @CRLF & @CRLF & "/p:password   Provides password to pdf." _
-				 & @CRLF & @CRLF & "/debug   Copies print command to Windows clipboard.")
-	EndIf
-	$code = 1
-	Exit $code
+	Display("Usage:" & @CRLF & @CRLF _
+			 & "PDFtoPrinter.exe [path\]filename.pdf [" & $qt & "printer name" & _
+			$qt & "] [pages=#-#] [copies=#] [focus=" & $qt & "Window title" & $qt & "] [/debug] [/r] [/R[x]] [/s] [/p:password] [/csv] [/mock]" _
+			 & @CRLF & @CRLF & "Use quotation marks around [path\]filename with spaces. " _
+			 & "OK to use relative path and filename-wildcards (* and ?)." _
+			 & @CRLF & @CRLF & "Default printer is used unless printer name is specified." _
+			 & @CRLF & @CRLF & "Rename to PDFtoPrinterSelect.exe for select-printer menu." _
+			 & @CRLF & "(menu does not appear if printer name is specified)." _
+			 & @CRLF & @CRLF & "Page-range examples: 3 [or] 2-4,6,8-9 [or] " _
+			 & "8- [or] z-1 for reverse-print [or] z-1:odd|even reverse-print odd/even pages [or] " _
+			 & "r5-r2 for 5th-to-last to 2nd-to-last page." _
+			 & @CRLF & @CRLF & "focus=   Restores focus to specified window title." _
+			 & @CRLF & @CRLF & "/r   Recursive directory listing (this folder only, " _
+			 & "default when filename includes wildcard)." _
+			 & @CRLF & @CRLF & "/s   Run silently; disable user interaction and focus=" _
+			 & @CRLF & @CRLF & "/csv   Generate csv file listing file(s) printed. " _
+			 & "CSV file written to %temp%\pdftoprintertmp." _
+			 & @CRLF & @CRLF & "/mock   Generate csv file only; don't print PDF files." _
+			 & @CRLF & @CRLF & "/Rn   Recursive directory listing to n depth of subfolders; " _
+			 & "if n is absent, recurs through all subfolders." _
+			 & @CRLF & @CRLF & "/p:password   Provides password to pdf." _
+			 & @CRLF & @CRLF & "/debug   Copies print command to Windows clipboard.")
+	Exit
 EndIf
 
 
@@ -130,13 +106,8 @@ EndIf
 ;If printer does not exist in this machine
 $printerlist = GetPrinter("", 1)
 If UBound($printerlist) = 0 And $mock = 0 Then
-	If $cli = 0 Then
-		MsgBox(0, $msgTitle, "No printer found.")
-	Else
-		ConsoleWrite("No printer found.")
-	EndIf
-	$code = 2
-	Exit $code
+	Display("No printer found.")
+	Exit
 EndIf
 
 ; Parse command-line parameters.
@@ -154,13 +125,8 @@ If $cmln >= 1 Then
 			$copies = (StringMid($CmdLine[$x], 8, -1))
 			If Not @Compiled Then ConsoleWrite("Copies: " & $copies & @LF)
 			If Not StringIsInt($copies) Then
-				If $cli = 0 Then
-					MsgBox(0, $msgTitle, "The copies= parameter must use an integer.")
-				Else
-					ConsoleWrite("The copies= parameter must use an integer.")
-				EndIf
-				$code = 3
-				Exit $code
+				Display("The copies= parameter must use an integer.")
+				Exit
 			EndIf
 			$copies = Abs($copies) ; negative integer is interger too.
 		ElseIf StringLower(StringLeft($CmdLine[$x], 6)) = "focus=" Then ; return Focus
@@ -179,13 +145,8 @@ If $cmln >= 1 Then
 				If StringIsInt(StringTrimLeft($CmdLine[$x], 2)) Then
 					$recurLevel = 0 - Abs(StringTrimLeft($CmdLine[$x], 2))
 				Else
-					If $cli = 0 Then
-						MsgBox(0, $msgTitle, "For /Rx x must be number.")
-					Else
-						ConsoleWrite("For /Rx x must be number")
-					EndIf
-					$code = 4
-					Exit $code
+					Display("For /Rx x must be number.")
+					Exit
 				EndIf
 			EndIf
 		ElseIf StringLower(StringLeft($CmdLine[$x], 3)) = "/p:" Then
@@ -217,38 +178,23 @@ EndIf
 
 ; if no printer or invalid parameters encountered:
 If $printervalid = 0 Then
-	If $cli = 0 Then
-		MsgBox(0, $msgTitle, "Printer name """ & $printername & """ not found or argument """ & $printername & """is not valid.")
-	Else
-		ConsoleWrite("Printer name """ & $printername & """ not found or argument """ & $printername & """is not valid.")
-	EndIf
-	$code = 5
-	Exit $code
+	Display("Printer name """ & $printername & """ not found or argument """ & $printername & """is not valid.")
+	Exit
 EndIf
 
 
-; if no pdf filename given:
+; if no pdf file name given:
 If $pdffile = "" Then
-	If $cli = 0 Then
-		MsgBox(0, $msgTitle, "Wrong arguments: no [path]filename with .pdf extension provided.")
-	Else
-		ConsoleWrite("Wrong arguments: no [path]filename with .pdf extension provided.")
-	EndIf
-	$code = 6
-	Exit $code
+	Display("Wrong arguments: no [path]filename with .pdf extension provided.")
+	Exit
 EndIf
 
 ; get pdf file list
 If $recurLevel <= 1 Then
 	$pdffiles = getfilematched($pdffile, $recurLevel, $pth)
 	If @error Then
-		If $cli = 0 Then
-			MsgBox(0, $msgTitle, $pdffiles)
-		Else
-			ConsoleWrite($pdffiles)
-		EndIf
-		$code = 7
-		Exit $code
+		Display($pdffiles)
+		Exit
 	EndIf
 Else
 	Local $pdffiles[2]
@@ -502,14 +448,8 @@ For $i = 1 To $pdffiles[0]
 	If $debug = 1 Then
 		ClipPut($qt & $myDir & "\PDFXCview.exe" & $qt & $printstring & _
 				" " & $qt & $pdffiles[$i] & $qt)
-		If $cli = 0 Then
-			MsgBox(0, $msgTitle, "The PDFXCview.exe print command has been copied to the clipboard. " & _
-					"In case of problems, open a command window, paste in the command, and experiment with it.")
-		Else
-			ConsoleWrite("The PDFXCview.exe print command has been copied to the clipboard. " & _
-					"In case of problems, open a command windows, and paste it in and experiment with it.")
-		EndIf
-
+		Display("The PDFXCview.exe print command has been copied to the clipboard. " & _
+				"In case of problems, open a command window, paste in the command, and experiment with it.")
 	EndIf
 	If $focus <> "" And $silent <> 0 Then WinActivate($focus)
 Next
@@ -533,7 +473,6 @@ EndIf
 ;DeleteFile($myDir & "\qpdf28.dll")
 ;DeleteFile($myDir & "\resource.dat")
 ;DeleteFile($myDir & "\settings.dat")
-$aArray
 
 Exit     ;main script ends here.
 
@@ -704,14 +643,8 @@ EndFunc   ;==>_FileIsUsed
 
 Func Handle_MultipleInstance()
 	If _Singleton(StringReplace(@ScriptFullPath, '\', '/'), 1) = 0 Then
-		Local $sMsgBoxMsg = "PDFtoPrinter.exe is already running. Please wait."
-		If $cli = 0 Then
-			MsgBox(0, $msgTitle, $sMsgBoxMsg, 2)
-		Else
-			ConsoleWrite($sMsgBoxMsg)
-		EndIf
-		$code = 9
-		Exit $code
+		Flash("PDFtoPrinter.exe is already running. Please wait.")
+		Exit
 	EndIf
 EndFunc   ;==>Handle_MultipleInstance
 
@@ -1072,3 +1005,36 @@ Func cleanup($qpdfhdl, $hDLL)
 	$qpdfcleanup = DllCall($hDLL, "NONE:cdecl", "qpdf_cleanup", "PTR*", $qpdfhdl) ; PTR will crash, but PTR* not why?
 	DllClose($hDLL)
 EndFunc   ;==>cleanup
+
+Func ExecutableNameFlag($flagname)
+	;
+	; The application will behave differently based on it's filename.
+	; The user can rename it to trigger some features.
+	;
+	Return StringInStr(@ScriptName, $flagname)
+EndFunc   ;==>ExecutableNameFlag
+
+Func CLIMode()
+	Return $cli == 1
+EndFunc   ;==>CLIMode
+
+Func Display($message)
+	;
+	; The application can be run on CLI mode or GUI mode.
+	; When in CLI mode we write to the console.
+	; When in GUI mode display a message box.
+	;
+	If CLIMode() Then
+		ConsoleWrite($message)
+	Else
+		MsgBox(0, $msgTitle, $message)
+	EndIf
+EndFunc   ;==>Display
+
+Func Flash($message)
+	If CLIMode() Then
+		ConsoleWrite($message)
+	Else
+		MsgBox(0, $msgTitle, $message, 2)
+	EndIf
+EndFunc   ;==>Flash
