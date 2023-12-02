@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=pdftoprinter.ico
 #AutoIt3Wrapper_Outfile=D:\Dropbox\PDFtoPrinter\PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_Description=PDFtoPrinter.exe
-#AutoIt3Wrapper_Res_Fileversion=2.0.3.192
+#AutoIt3Wrapper_Res_Fileversion=2.0.3.194
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -212,9 +212,9 @@ If FileExists(@ScriptDir & "\PDF-Xchange Viewer Settings.dat") Then $custom = 1
 ; extract PDFXChange Viewer and settings.dat and qpdf28.dll ... to %temp% directory.
 Local $myDir = @TempDir & "\PDFPrinterTmp"
 DirCreate($myDir)
-$tmp = FileInstall("d:\dropbox\vdosinst\programs\PDFXCview.exe", $myDir & "\PDFXCview.exe")
-FileInstall("d:\dropbox\pdftoprinter\qpdf28.dll", $myDir & "\qpdf28.dll")
-FileInstall("d:\dropbox\pdftoprinter\resource.dat", $myDir & "\resource.dat", 1)
+$tmp = FileInstall(".\PDFXCview.exe", $myDir & "\PDFXCview.exe")
+FileInstall(".\qpdf28.dll", $myDir & "\qpdf28.dll")
+FileInstall(".\resource.dat", $myDir & "\resource.dat", 1)
 FileDelete($myDir & "\settings.dat")
 
 ; next lines fixed by Wilberto Morales
@@ -223,7 +223,7 @@ If $custom = 1 Then
 ElseIf $custom = 2 Then
 	FileCopy($pth & "\PDF-Xchange Viewer Settings.dat", $myDir & "\settings.dat", 1)
 Else
-	FileInstall("d:\dropbox\pdftoprinter\Settings.dat", $myDir & "\settings.dat", 1)
+	FileInstall(".\Settings.dat", $myDir & "\settings.dat", 1)
 EndIf
 
 $errors = "" ; variable to collect error information.
