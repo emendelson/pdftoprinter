@@ -1,6 +1,6 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=pdftoprinter.ico
-#AutoIt3Wrapper_Outfile=D:\Dropbox\PDFtoPrinter\PDFtoPrinter.exe
+#AutoIt3Wrapper_Outfile=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_Description=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_Fileversion=2.0.3.194
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
