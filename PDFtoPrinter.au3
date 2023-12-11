@@ -62,6 +62,13 @@ If Not ExecutableNameFlag("m") Then
 	Handle_MultipleInstance()
 EndIf
 
+; comment out next 5 lines to support Windows 7, 8, etc.
+If Not StringInStr(@OSVersion, "1") Then
+	Display("Windows 10 or later required.")
+	$code = 12
+	Exit $code
+EndIf
+
 If ExecutableNameFlag("select") Then $showselptr = 1 ;Printer selection GUI popup
 If ExecutableNameFlag("debug") Then $debug = 1
 If ExecutableNameFlag("cli") Then $cli = 1 ;Commandline interface only, no gui window
