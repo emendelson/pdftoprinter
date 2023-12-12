@@ -1,8 +1,9 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=pdftoprinter.ico
 #AutoIt3Wrapper_Outfile=PDFtoPrinter.exe
+#AutoIt3Wrapper_Change2CUI=y
 #AutoIt3Wrapper_Res_Description=PDFtoPrinter.exe
-#AutoIt3Wrapper_Res_Fileversion=2.0.3.198
+#AutoIt3Wrapper_Res_Fileversion=2.0.3.201
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -63,7 +64,7 @@ EndIf
 ; comment out next 5 lines to support Windows 7, 8, etc.
 If Not StringInStr(@OSVersion, "1") Then
 	Display("Windows 10 or later required.")
-	$code = 12
+	$code = 1
 	Exit $code
 EndIf
 
@@ -95,7 +96,8 @@ If $cmln = 0 Then    ;If no paramters given
 			 & "if n is absent, recurs through all subfolders." _
 			 & @CRLF & @CRLF & "/p:password   Provides password to pdf." _
 			 & @CRLF & @CRLF & "/debug   Copies print command to Windows clipboard.")
-	Exit
+	$code = 2
+	Exit $code
 EndIf
 
 
@@ -112,7 +114,8 @@ EndIf
 $printerlist = GetPrinter("", 1)
 If UBound($printerlist) = 0 And $mock = 0 Then
 	Display("No printer found.")
-	Exit
+	$code = 3
+	Exit $code
 EndIf
 
 ; Parse command-line parameters.
@@ -131,7 +134,8 @@ If $cmln >= 1 Then
 			If Not @Compiled Then ConsoleWrite("Copies: " & $copies & @LF)
 			If Not StringIsInt($copies) Then
 				Display("The copies= parameter must use an integer.")
-				Exit
+				$code = 4
+				Exit $code
 			EndIf
 			$copies = Abs($copies) ; negative integer is interger too.
 		ElseIf StringLower(StringLeft($CmdLine[$x], 6)) = "focus=" Then ; return Focus
@@ -151,7 +155,8 @@ If $cmln >= 1 Then
 					$recurLevel = 0 - Abs(StringTrimLeft($CmdLine[$x], 2))
 				Else
 					Display("For /Rx x must be number.")
-					Exit
+					$code = 5
+					Exit $code
 				EndIf
 			EndIf
 		ElseIf StringLower(StringLeft($CmdLine[$x], 3)) = "/p:" Then
@@ -184,14 +189,16 @@ EndIf
 ; if no printer or invalid parameters encountered:
 If $printervalid = 0 Then
 	Display("Printer name """ & $printername & """ not found or argument """ & $printername & """is not valid.")
-	Exit
+	$code = 6
+	Exit $code
 EndIf
 
 
 ; if no pdf file name given:
 If $pdffile = "" Then
 	Display("Wrong arguments: no [path]filename with .pdf extension provided.")
-	Exit
+	$code = 7
+	Exit $code
 EndIf
 
 ; get pdf file list
@@ -199,7 +206,8 @@ If $recurLevel <= 1 Then
 	$pdffiles = getfilematched($pdffile, $recurLevel, $pth)
 	If @error Then
 		Display($pdffiles)
-		Exit
+		$code = 8
+		Exit $code
 	EndIf
 Else
 	Local $pdffiles[2]
@@ -464,6 +472,9 @@ If $errors <> "" Then
 		If $silent = 0 Then MsgBox(0, "Error lists:", $errors)
 	EndIf
 	ConsoleWrite("Error lists: " & @CRLF & $errors)
+	$code = 9
+Else
+	$code = 0
 EndIf
 
 ;write csv file
@@ -479,7 +490,7 @@ EndIf
 ;DeleteFile($myDir & "\resource.dat")
 ;DeleteFile($myDir & "\settings.dat")
 
-Exit     ;main script ends here.
+Exit $code    ;main script ends here.
 
 Func _ArrayToCSV($aArray, $sDelim = Default, $sNewLine = Default, $bFinalBreak = True)
 	; #FUNCTION# ====================================================================================================================
@@ -540,7 +551,7 @@ Func DeleteFile($file) ; è unito con  _Spediamo_it_CSV()
 	If $file_usage = -1 Then
 		MsgBox(0, @ScriptName, $file & " is in use." & @CRLF & _
 				'Please close it before continuing.')
-		$code = 8
+		$code = 10
 		Exit $code
 	EndIf
 
@@ -649,7 +660,8 @@ EndFunc   ;==>_FileIsUsed
 Func Handle_MultipleInstance()
 	If _Singleton(StringReplace(@ScriptFullPath, '\', '/'), 1) = 0 Then
 		Flash("PDFtoPrinter.exe is already running. Please wait.")
-		Exit
+		$code = 11
+		Exit $code
 	EndIf
 EndFunc   ;==>Handle_MultipleInstance
 
@@ -820,12 +832,12 @@ Func getfilematched($pdffile, $irecur, $pth = @ScriptDir)
 			$aArray = _FileListToArrayRec($pth, $filter, $FLTAR_FILES, $irecur, $FLTAR_NOSORT, $FLTAR_FULLPATH)
 		Else
 			Return SetError(1, 0, "getfilematched($pdffile,$irecur). Unsupported $irecur, only 0 or 1 or negative integer number are supported.")
-			$code = 10
+			$code = 12
 			Exit $code
 		EndIf
 	Else
 		Return SetError(2, 0, "Error: [path]Filename must end with .pdf, but filename supports wildcard * and ?(path does not support wildcards.)")
-		$code = 11
+		$code = 13
 		Exit $code
 	EndIf
 	If $aArray = "" Then
