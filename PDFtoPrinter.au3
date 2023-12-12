@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=pdftoprinter.ico
 #AutoIt3Wrapper_Outfile=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_Description=PDFtoPrinter.exe
-#AutoIt3Wrapper_Res_Fileversion=2.0.3.194
+#AutoIt3Wrapper_Res_Fileversion=2.0.3.198
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -18,7 +18,6 @@
 #include <WinAPI.au3>
 #include <APIErrorsConstants.au3>
 #include <Misc.au3>
-#include "GUIScrollbars_Ex.au3"
 #include <Math.au3>
 #include <string.au3>
 #include <file.au3>
@@ -54,7 +53,6 @@ Local $pageselector = 0 ; no page selector
 Local $pdfgiven = 0 ; What if a printfile name ends with .pdf? deal with it.
 Local $printervalid = 1
 Local $pageselector = ""
-
 
 Opt("WinTitleMatchMode", -2)
 
