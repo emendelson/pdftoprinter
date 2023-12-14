@@ -3,7 +3,7 @@
 #AutoIt3Wrapper_Outfile=PDFtoPrinter.exe
 #AutoIt3Wrapper_Change2CUI=y
 #AutoIt3Wrapper_Res_Description=PDFtoPrinter.exe
-#AutoIt3Wrapper_Res_Fileversion=2.0.3.201
+#AutoIt3Wrapper_Res_Fileversion=2.0.3.202
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -32,6 +32,7 @@ Global $printername
 Global $defaultprinter
 Global $gh
 Global $code
+Global $silent = 0 ; Do not popup error or warning or password window.
 
 Local $pth = @WorkingDir
 If StringRight($pth, 1) = "\" Then $pth = StringTrimRight($pth, 1) ;Working directory is disk root, C:\
@@ -48,7 +49,6 @@ Local $printstring
 Local $recurLevel = 1 ;Recur all files matching filename in this folder.
 Local $password = ""
 Local $csv = 0 ; Change to 1 to output csv.
-Local $silent = 0 ; Do not popup error or warning or password window.
 Local $mock = 0 ; Really print or just simulate.
 Local $pageselector = 0 ; no page selector
 Local $pdfgiven = 0 ; What if a printfile name ends with .pdf? deal with it.
@@ -549,7 +549,7 @@ Func DeleteFile($file) ; è unito con  _Spediamo_it_CSV()
 	$file_usage = FileOpen($file, 1)
 
 	If $file_usage = -1 Then
-		MsgBox(0, @ScriptName, $file & " is in use." & @CRLF & _
+		If $silent = 0 Then MsgBox(0, @ScriptName, $file & " is in use." & @CRLF & _
 				'Please close it before continuing.')
 		$code = 10
 		Exit $code
@@ -1044,7 +1044,7 @@ Func Display($message)
 	If CLIMode() Then
 		ConsoleWrite($message)
 	Else
-		MsgBox(0, $msgTitle, $message)
+		If $silent = 0 Then MsgBox(0, $msgTitle, $message)
 	EndIf
 EndFunc   ;==>Display
 
@@ -1052,6 +1052,6 @@ Func Flash($message)
 	If CLIMode() Then
 		ConsoleWrite($message)
 	Else
-		MsgBox(0, $msgTitle, $message, 2)
+		If $silent = 0 Then MsgBox(0, $msgTitle, $message, 2)
 	EndIf
 EndFunc   ;==>Flash
