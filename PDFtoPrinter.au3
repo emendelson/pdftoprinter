@@ -3,7 +3,7 @@
 #AutoIt3Wrapper_Outfile=PDFtoPrinter.exe
 #AutoIt3Wrapper_Change2CUI=y
 #AutoIt3Wrapper_Res_Description=PDFtoPrinter.exe
-#AutoIt3Wrapper_Res_Fileversion=2.0.3.202
+#AutoIt3Wrapper_Res_Fileversion=2.0.3.203
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -54,6 +54,8 @@ Local $pageselector = 0 ; no page selector
 Local $pdfgiven = 0 ; What if a printfile name ends with .pdf? deal with it.
 Local $printervalid = 1
 Local $pageselector = ""
+Local $aMultiFiles[0]
+Local $morethanone = 0
 
 Opt("WinTitleMatchMode", -2)
 
@@ -75,11 +77,12 @@ If ExecutableNameFlag("cli") Then $cli = 1 ;Commandline interface only, no gui w
 Local $cmln = $CmdLine[0] ;Total commandline parameters entered.
 If $cmln = 0 Then    ;If no paramters given
 	Display("Usage:" & @CRLF & @CRLF _
-			 & "PDFtoPrinter.exe [path\]filename.pdf [" & $qt & "printer name" & _
+			 & "PDFtoPrinter.exe [path\]filename.pdf [other filenames] [" & $qt & "printer name" & _
 			$qt & "] [pages=#-#] [copies=#] [focus=" & $qt & "Window title" & $qt & "] [/debug] [/r] [/R[x]] [/s] [/p:password] [/csv] [/mock]" _
 			 & @CRLF & @CRLF & "Use quotation marks around [path\]filename with spaces. " _
-			 & "OK to use relative path and filename-wildcards (* and ?)." _
-			 & @CRLF & @CRLF & "Default printer is used unless printer name is specified." _
+			 & "Relative paths and filename-wildcards (* and ?) are OK." _
+			 & @CRLF & @CRLF & "If more than one filename, do not use wildcard or /r or /R  (recursive option). " _
+			 & @CRLF & "Default printer is used unless printer name is specified." _
 			 & @CRLF & @CRLF & "Rename to PDFtoPrinterSelect.exe for select-printer menu." _
 			 & @CRLF & "(menu does not appear if printer name is specified)." _
 			 & @CRLF & @CRLF & "Page-range examples: 3 [or] 2-4,6,8-9 [or] " _
@@ -94,7 +97,7 @@ If $cmln = 0 Then    ;If no paramters given
 			 & @CRLF & @CRLF & "/mock   Generate csv file only; don't print PDF files." _
 			 & @CRLF & @CRLF & "/Rn   Recursive directory listing to n depth of subfolders; " _
 			 & "if n is absent, recurs through all subfolders." _
-			 & @CRLF & @CRLF & "/p:password   Provides password to pdf." _
+			 & @CRLF & @CRLF & "/p:password   Password for encrypted pdf." _
 			 & @CRLF & @CRLF & "/debug   Copies print command to Windows clipboard.")
 	$code = 2
 	Exit $code
@@ -126,6 +129,13 @@ If $cmln >= 1 Then
 			If $pdfgiven = 0 Then
 				$pdfgiven = 1
 				$pdffile = $CmdLine[$x]
+				$pdffile = _PathFull($pdffile)
+				_ArrayAdd($aMultiFiles, $pdffile)
+			Else
+				$morethanone = 1
+				$pdffile = $CmdLine[$x]
+				$pdffile = _PathFull($pdffile)
+				_ArrayAdd($aMultiFiles, $pdffile)
 			EndIf
 		ElseIf StringLower(StringLeft($CmdLine[$x], 6)) = "pages=" Then
 			$pageselector = $cmdline[$x]
@@ -185,7 +195,6 @@ If $cmln >= 1 Then
 	Next
 EndIf
 
-
 ; if no printer or invalid parameters encountered:
 If $printervalid = 0 Then
 	Display("Printer name """ & $printername & """ not found or argument """ & $printername & """is not valid.")
@@ -214,7 +223,6 @@ Else
 	$pdffiles[0] = 1
 	$pdffiles[1] = $pdffile
 EndIf
-
 
 ; if PDFXchange Viewer settings available in working directory or script directory, use it.
 ; PDF-Xchange Viewer Settings.dat in working directory has higher priority.
@@ -247,6 +255,16 @@ Local $summary[1][12] ; array variable to collect information for CSV.
 $tmpstr = "Index, Filepath, Filename, Datetime, IsEntrypted, PageCount, Command string executed(can be used for bat), Page selector, Total pages selected, Copies,Result(assume all actions reqiuring human interaction is successful even you cancelled the password input window.), Error info"
 
 _ArrayInsert($summary, 0, $tmpstr, 0, ",")
+
+; if more than one file specified on the command line, then use those files as the pdf file list
+If $morethanone = 1 Then
+	$fileCount = UBound($aMultiFiles)
+	_ArrayInsert($aMultiFiles, 0, $fileCount)
+	$pdffiles = $aMultiFiles
+EndIf
+_ArrayDisplay($pdffiles)
+; _ArrayDisplay($aMultiFiles)
+; Exit
 
 ; loop all matching pdf files
 For $i = 1 To $pdffiles[0]
