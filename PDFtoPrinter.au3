@@ -3,7 +3,7 @@
 #AutoIt3Wrapper_Outfile=PDFtoPrinter.exe
 #AutoIt3Wrapper_Change2CUI=y
 #AutoIt3Wrapper_Res_Description=PDFtoPrinter.exe
-#AutoIt3Wrapper_Res_Fileversion=2.0.3.203
+#AutoIt3Wrapper_Res_Fileversion=2.0.3.204
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -262,7 +262,7 @@ If $morethanone = 1 Then
 	_ArrayInsert($aMultiFiles, 0, $fileCount)
 	$pdffiles = $aMultiFiles
 EndIf
-_ArrayDisplay($pdffiles)
+; _ArrayDisplay($pdffiles)
 ; _ArrayDisplay($aMultiFiles)
 ; Exit
 
