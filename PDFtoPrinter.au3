@@ -3,7 +3,7 @@
 #AutoIt3Wrapper_Outfile=PDFtoPrinter.exe
 #AutoIt3Wrapper_Change2CUI=y
 #AutoIt3Wrapper_Res_Description=PDFtoPrinter.exe
-#AutoIt3Wrapper_Res_Fileversion=2.0.3.204
+#AutoIt3Wrapper_Res_Fileversion=2.0.3.205
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -59,15 +59,22 @@ Local $morethanone = 0
 
 Opt("WinTitleMatchMode", -2)
 
-If Not ExecutableNameFlag("m") Then
-	Handle_MultipleInstance()
+Global $OSBuild = 1
+$OSBuild = FileGetVersion("user32.dll")
+If (StringRegExp($OSBuild, "^(.*)\.(.+)\.(.+)\.(.*)$")) Then
+	$OSBuild = StringRegExp($OSBuild, "^(.*)\.(.+)\.(.+)\.(.*)$", 1)
+	$OSBuild = $OSBuild[2]
+Else
+	$OSBuild = @OSBuild
 EndIf
-
-; comment out next 5 lines to support Windows 7, 8, etc.
-If Not StringInStr(@OSVersion, "1") Then
-	Display("Windows 10 or later required.")
+If $OSBuild < 10000 Then
+	Display("Windows 10, Windows Server 2016, or later required.")
 	$code = 1
 	Exit $code
+EndIf
+
+If Not ExecutableNameFlag("m") Then
+	Handle_MultipleInstance()
 EndIf
 
 If ExecutableNameFlag("select") Then $showselptr = 1 ;Printer selection GUI popup
