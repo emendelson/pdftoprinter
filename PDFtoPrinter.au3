@@ -237,11 +237,16 @@ Local $custom = 0
 If FileExists($pth & "\PDF-Xchange Viewer Settings.dat") Then $custom = 2
 If FileExists(@ScriptDir & "\PDF-Xchange Viewer Settings.dat") Then $custom = 1
 
-; extract PDFXChange Viewer and settings.dat and qpdf28.dll ... to %temp% directory.
+; extract PDFXChange Viewer and settings.dat and qpdf29.dll ... to %temp% directory.
 Local $myDir = @TempDir & "\PDFPrinterTmp"
 DirCreate($myDir)
 $tmp = FileInstall(".\PDFXCview.exe", $myDir & "\PDFXCview.exe")
-FileInstall(".\qpdf28.dll", $myDir & "\qpdf28.dll")
+FileInstall(".\msvcp140.dll", $myDir & "\msvcp140.dll")
+FileInstall(".\msvcp140_1.dll", $myDir & "\msvcp140_1.dll")
+FileInstall(".\msvcp140_2.dll", $myDir & "\msvcp140_2.dll")
+FileInstall(".\msvcp140_atomic_wait.dll", $myDir & "\msvcp140_atomic_wait.dll")
+FileInstall(".\msvcp140_codecvt_ids.dll", $myDir & "\msvcp140_codecvt_ids.dll")
+FileInstall(".\qpdf29.dll", $myDir & "\qpdf29.dll")
 FileInstall(".\resource.dat", $myDir & "\resource.dat", 1)
 FileDelete($myDir & "\settings.dat")
 
@@ -291,8 +296,8 @@ For $i = 1 To $pdffiles[0]
 		ContinueLoop ;loop next pdf file.
 	EndIf
 
-	; get page count of pdf file. If qpdf28.dll does not exist in %temp%\pdftoprintertmp, try to load qpdf28.dll in the script folder.
-	$pdfpagecount = qpdfgetpagecount($pdffiles[$i], $password, $myDir & "\qpdf28.dll")
+	; get page count of pdf file. If qpdf29.dll does not exist in %temp%\pdftoprintertmp, try to load qpdf29.dll in the script folder.
+	$pdfpagecount = qpdfgetpagecount($pdffiles[$i], $password, $myDir & "\qpdf29.dll")
 	If @error Then ; error getting pdf page count, means pdf is invalid or corrupted.
 		; pdf viewer may able to repair some corrupted pdf file, no chance to do so now.
 		; qpdf can get pagecount of encrypted pdf without password, so error is not set when pdf is encrypted.
@@ -511,7 +516,7 @@ EndIf
 
 ; cleanup $mydir?
 ;DeleteFile($myDir & "\PDFXCview.exe")
-;DeleteFile($myDir & "\qpdf28.dll")
+;DeleteFile($myDir & "\qpdf29.dll")
 ;DeleteFile($myDir & "\resource.dat")
 ;DeleteFile($myDir & "\settings.dat")
 
@@ -872,10 +877,10 @@ Func getfilematched($pdffile, $irecur, $pth = @ScriptDir)
 	Return $aArray
 EndFunc   ;==>getfilematched
 
-Func qpdfgetpagecount($pdffilename, $pdfpassword = "", $qpdfdll = "qpdf28.dll")
+Func qpdfgetpagecount($pdffilename, $pdfpassword = "", $qpdfdll = "qpdf29.dll")
 	;$pdffilename pdf file name full path only.
 	;$pdfpassword optional
-	;$qpdfdll location of qpdf28.DllCall
+	;$qpdfdll location of qpdf29.DllCall
 	;return int pdf pagecount. negative number means pdf is encryped.
 	$encrypted = 0
 	If Not FileExists($pdffilename) Then
@@ -886,7 +891,7 @@ Func qpdfgetpagecount($pdffilename, $pdfpassword = "", $qpdfdll = "qpdf28.dll")
 		Return SetError(1, 0, "Can't find " & $qpdfdll & ".")
 	EndIf
 
-	;Create a pointer to pdf filename since qpdf28.dll supoorts only ansi encoding,
+	;Create a pointer to pdf filename since qpdf29.dll supoorts only ansi encoding,
 	; but convert utf8 string to ansi string directly may cause file not found error,
 	; especially when filename contain no ascii characters.
 	Local $pdffilenameHex = StringToBinary($pdffilename, 4)
