@@ -1,11 +1,11 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=pdftoprinter.ico
-#AutoIt3Wrapper_Outfile=PDFtoPrinter32.exe
+#AutoIt3Wrapper_Outfile=PDFtoPrinter.exe
 #AutoIt3Wrapper_Change2CUI=y
-#AutoIt3Wrapper_Res_Description=PDFtoPrinter32.exe
-#AutoIt3Wrapper_Res_Fileversion=2.0.3.212
+#AutoIt3Wrapper_Res_Description=PDFtoPrinter.exe
+#AutoIt3Wrapper_Res_Fileversion=2.0.3.214
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
-#AutoIt3Wrapper_Res_ProductName=PDFtoPrinter32.exe
+#AutoIt3Wrapper_Res_ProductName=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_SaveSource=y
 #AutoIt3Wrapper_Res_Language=1033
 #AutoIt3Wrapper_Res_requestedExecutionLevel=asInvoker
@@ -98,6 +98,8 @@ If $cmln = 0 Then    ;If no paramters given
 			 & "8- [or] z-1 for reverse-print [or] z-1:odd|even reverse-print odd/even pages [or] " _
 			 & "r5-r2 for 5th-to-last to 2nd-to-last page." _
 			 & @CRLF & @CRLF & "focus=   Restores focus to specified window title." _
+			 & @CRLF & @CRLF & "/mydir=   Specific temp folder; use quote marks for path " _
+			 & "with spaces (default is in user's temp folder)." _
 			 & @CRLF & @CRLF & "/r   Recursive directory listing (this folder only, " _
 			 & "default when filename includes wildcard)." _
 			 & @CRLF & @CRLF & "/s   Run silently; disable user interaction and focus=" _
@@ -129,6 +131,9 @@ If UBound($printerlist) = 0 And $mock = 0 Then
 	$code = 3
 	Exit $code
 EndIf
+
+; default myDir; change via command-line
+Local $myDir = @TempDir & "\PDFPrinterTmp"
 
 ; Parse command-line parameters.
 If $cmln >= 1 Then
@@ -162,6 +167,11 @@ If $cmln >= 1 Then
 			If Not StringLeft($focus, 1) = Chr(34) Then $focus = Chr(34) & $focus
 			If Not StringRight($focus, 1) = Chr(34) Then $focus = $focus & Chr(34)
 			If Not @Compiled Then ConsoleWrite("$focus = " & $focus & @LF)
+		ElseIf StringLower(StringLeft($CmdLine[$x], 7)) = "/mydir=" Then     ; return myDir
+			$myDir = (StringMid($CmdLine[$x], 8, -1))
+			;If Not StringLeft($myDir, 1) = Chr(34) Then $myDir = Chr(34) & $myDir
+			;If Not StringRight($myDir, 1) = Chr(34) Then $myDir = $myDir & Chr(34)
+			If Not @Compiled Then ConsoleWrite("$mydir = " & $myDir & @LF)
 		ElseIf $CmdLine[$x] = "/debug" Then
 			$debug = 1
 		ElseIf StringCompare($CmdLine[$x], "/r", 1) = 0 Then
@@ -211,7 +221,6 @@ If $printervalid = 0 Then
 	Exit $code
 EndIf
 
-
 ; if no pdf file name given:
 If $pdffile = "" Then
 	Display("Wrong arguments: no [path]filename with .pdf extension provided.")
@@ -240,7 +249,7 @@ If FileExists($pth & "\PDF-Xchange Viewer Settings.dat") Then $custom = 2
 If FileExists(@ScriptDir & "\PDF-Xchange Viewer Settings.dat") Then $custom = 1
 
 ; extract PDFXChange Viewer and settings.dat and qpdf29.dll ... to %temp% directory.
-Local $myDir = @TempDir & "\PDFPrinterTmp"
+;Local $myDir = @TempDir & "\PDFPrinterTmp"
 DirCreate($myDir)
 $tmp = FileInstall(".\PDFXCview.exe", $myDir & "\PDFXCview.exe")
 FileInstall(".\msvcp140.dll", $myDir & "\msvcp140.dll")
@@ -299,8 +308,10 @@ For $i = 1 To $pdffiles[0]
 	EndIf
 
 	;;; new - disables qpdf
-	If $pageselector <> "" Then $qpdf = 1
-	;;; new - disables qpdf
+	;; If $pageselector <> "" Then $qpdf = 1
+	;;; new - 0 disables qpdf
+	$qpdf = 1
+
 	If $qpdf = 1 Then
 		; get page count of pdf file. If qpdf29.dll does not exist in %temp%\pdftoprintertmp, try to load qpdf29.dll in the script folder.
 		$pdfpagecount = qpdfgetpagecount($pdffiles[$i], $password, $myDir & "\qpdf29.dll")
