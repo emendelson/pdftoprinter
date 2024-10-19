@@ -1,12 +1,11 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=pdftoprinter.ico
-#AutoIt3Wrapper_Outfile=PDFtoPrinter64.exe
-#AutoIt3Wrapper_UseX64=y
+#AutoIt3Wrapper_Outfile=PDFtoPrinter32.exe
 #AutoIt3Wrapper_Change2CUI=y
-#AutoIt3Wrapper_Res_Description=PDFtoPrinter64.exe
-#AutoIt3Wrapper_Res_Fileversion=2.0.3.211
+#AutoIt3Wrapper_Res_Description=PDFtoPrinter32.exe
+#AutoIt3Wrapper_Res_Fileversion=2.0.3.212
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
-#AutoIt3Wrapper_Res_ProductName=PDFtoPrinter.exe
+#AutoIt3Wrapper_Res_ProductName=PDFtoPrinter32.exe
 #AutoIt3Wrapper_Res_SaveSource=y
 #AutoIt3Wrapper_Res_Language=1033
 #AutoIt3Wrapper_Res_requestedExecutionLevel=asInvoker
@@ -24,8 +23,6 @@
 #include <string.au3>
 #include <file.au3>
 #include <Date.au3>
-
-#AutoIt3Wrapper_UseX64=y
 
 Global $msgTitle = "PDFtoPrinter.exe"
 Global $specified = 0
