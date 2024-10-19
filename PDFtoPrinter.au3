@@ -3,7 +3,7 @@
 #AutoIt3Wrapper_Outfile=PDFtoPrinter.exe
 #AutoIt3Wrapper_Change2CUI=y
 #AutoIt3Wrapper_Res_Description=PDFtoPrinter.exe
-#AutoIt3Wrapper_Res_Fileversion=2.0.3.206
+#AutoIt3Wrapper_Res_Fileversion=2.0.3.209
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -56,6 +56,8 @@ Local $printervalid = 1
 Local $pageselector = ""
 Local $aMultiFiles[0]
 Local $morethanone = 0
+;;;; new - disables qpdf
+Local $qpdf = 0
 
 Opt("WinTitleMatchMode", -2)
 
@@ -296,48 +298,54 @@ For $i = 1 To $pdffiles[0]
 		ContinueLoop ;loop next pdf file.
 	EndIf
 
-	; get page count of pdf file. If qpdf29.dll does not exist in %temp%\pdftoprintertmp, try to load qpdf29.dll in the script folder.
-	$pdfpagecount = qpdfgetpagecount($pdffiles[$i], $password, $myDir & "\qpdf29.dll")
-	If @error Then ; error getting pdf page count, means pdf is invalid or corrupted.
-		; pdf viewer may able to repair some corrupted pdf file, no chance to do so now.
-		; qpdf can get pagecount of encrypted pdf without password, so error is not set when pdf is encrypted.
-		If $cli = 0 Then
-			If $silent = 0 Then MsgBox(0, $msgTitle, $pdfpagecount, 3)
-		Else
-			ConsoleWrite($pdfpagecount)
-		EndIf
-		$errors = @CRLF & $errors & @CRLF & $pdffiles[$i] & " : getPageCount() error, pdf file Corrupted?"
-		$tmpstr = $tmpstr0 & _Now() & @CRLF & @CRLF & @CRLF & @CRLF & $pageselector & @CRLF & @CRLF & $copies & @CRLF & "Fail" & @CRLF & "getPageCount() error, pdf maybe invalid or corrupted."
-		_ArrayInsert($summary, $i, $tmpstr, 0, @CRLF, @TAB)
-		ContinueLoop ;loop next pdf file.
-	EndIf
-
-	;if pdfpagecount is less than 0, denote pdf is encrypted.
-	If $pdfpagecount < 0 Then $encrypted = 1
-	$pdfpagecount = Abs($pdfpagecount)
-
-	;if pageseletor is not provided, all pages will be printed.
-	If $pageselector <> "" Then
-		Local $pageselectortmp = parsepage($pageselector, $pdfpagecount)
-		If @error Then
+	;;; new - disables qpdf
+	If $pageselector <> "" Then $qpdf = 1
+	;;; new - disables qpdf
+	If $qpdf = 1 Then
+		; get page count of pdf file. If qpdf29.dll does not exist in %temp%\pdftoprintertmp, try to load qpdf29.dll in the script folder.
+		$pdfpagecount = qpdfgetpagecount($pdffiles[$i], $password, $myDir & "\qpdf29.dll")
+		If @error Then ; error getting pdf page count, means pdf is invalid or corrupted.
+			; pdf viewer may able to repair some corrupted pdf file, no chance to do so now.
+			; qpdf can get pagecount of encrypted pdf without password, so error is not set when pdf is encrypted.
 			If $cli = 0 Then
-				If $silent = 0 Then MsgBox(0, $msgTitle, $pageselectortmp, 3)
+				If $silent = 0 Then MsgBox(0, $msgTitle, $pdfpagecount, 3)
 			Else
-				ConsoleWrite($pageselectortmp)
+				ConsoleWrite($pdfpagecount)
 			EndIf
-			$errors = @CRLF & $errors & @CRLF & $pdffiles[$i] & " : Page selector """ & $pageselector & """ error(not valid)."
-			$tmpstr = $tmpstr0 & _Now() & @CRLF & $encrypted & @CRLF & $pdfpagecount & @CRLF & @CRLF & $pageselector & @CRLF & @CRLF & $copies & @CRLF & "Fail" & @CRLF & "Invalid page selector: " & $pageselectortmp
+			$errors = @CRLF & $errors & @CRLF & $pdffiles[$i] & " : getPageCount() error, pdf file Corrupted?"
+			$tmpstr = $tmpstr0 & _Now() & @CRLF & @CRLF & @CRLF & @CRLF & $pageselector & @CRLF & @CRLF & $copies & @CRLF & "Fail" & @CRLF & "getPageCount() error, pdf maybe invalid or corrupted."
 			_ArrayInsert($summary, $i, $tmpstr, 0, @CRLF, @TAB)
 			ContinueLoop ;loop next pdf file.
 		EndIf
-	Else
-		Local $pageselectortmp[2] = [$pdfpagecount, ""]
+
+		;if pdfpagecount is less than 0, denote pdf is encrypted.
+		If $pdfpagecount < 0 Then $encrypted = 1
+		$pdfpagecount = Abs($pdfpagecount)
+
+		;if pageseletor is not provided, all pages will be printed.
+		If $pageselector <> "" Then
+			Local $pageselectortmp = parsepage($pageselector, $pdfpagecount)
+			If @error Then
+				If $cli = 0 Then
+					If $silent = 0 Then MsgBox(0, $msgTitle, $pageselectortmp, 3)
+				Else
+					ConsoleWrite($pageselectortmp)
+				EndIf
+				$errors = @CRLF & $errors & @CRLF & $pdffiles[$i] & " : Page selector """ & $pageselector & """ error(not valid)."
+				$tmpstr = $tmpstr0 & _Now() & @CRLF & $encrypted & @CRLF & $pdfpagecount & @CRLF & @CRLF & $pageselector & @CRLF & @CRLF & $copies & @CRLF & "Fail" & @CRLF & "Invalid page selector: " & $pageselectortmp
+				_ArrayInsert($summary, $i, $tmpstr, 0, @CRLF, @TAB)
+				ContinueLoop ;loop next pdf file.
+			EndIf
+		Else
+			Local $pageselectortmp[2] = [$pdfpagecount, ""]
+		EndIf
+
+		$pgvar = "&" & $pageselectortmp[1] & $qt & " " ;/Pages= variable
+		If Not @Compiled Then ConsoleWrite("Pages: " & $pgvar & @LF)
+
+		If $pgvar = " " Then $pgvar = $qt
+
 	EndIf
-
-	$pgvar = "&" & $pageselectortmp[1] & $qt & " " ;/Pages= variable
-	If Not @Compiled Then ConsoleWrite("Pages: " & $pgvar & @LF)
-
-	If $pgvar = " " Then $pgvar = $qt
 
 	If $specified = 1 Then ; printer name specified in command line parameters.
 		; $printstring = " /print:printer=" & $qt & $printername & $qt & $pgvar ; fixed per Peter Mickle
