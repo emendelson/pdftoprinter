@@ -25,6 +25,8 @@
 #include <file.au3>
 #include <Date.au3>
 
+#AutoIt3Wrapper_UseX64=y
+
 Global $msgTitle = "PDFtoPrinter.exe"
 Global $specified = 0
 Global $cli = 0
