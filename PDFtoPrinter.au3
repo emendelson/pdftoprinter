@@ -3,7 +3,7 @@
 #AutoIt3Wrapper_Outfile=PDFtoPrinter.exe
 #AutoIt3Wrapper_Change2CUI=y
 #AutoIt3Wrapper_Res_Description=PDFtoPrinter.exe
-#AutoIt3Wrapper_Res_Fileversion=2.0.3.214
+#AutoIt3Wrapper_Res_Fileversion=2.0.3.215
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -323,7 +323,9 @@ For $i = 1 To $pdffiles[0]
 			Else
 				ConsoleWrite($pdfpagecount)
 			EndIf
-			$errors = @CRLF & $errors & @CRLF & $pdffiles[$i] & " : getPageCount() error, pdf file Corrupted?"
+			$errors = @CRLF & $errors & @CRLF & $pdffiles[$i] & " : " & _
+					"You should install the latest VC redistributable from Microsoft." & @CRLF & @CRLF & _
+					"See the download page for PDFtoPrinter."
 			$tmpstr = $tmpstr0 & _Now() & @CRLF & @CRLF & @CRLF & @CRLF & $pageselector & @CRLF & @CRLF & $copies & @CRLF & "Fail" & @CRLF & "getPageCount() error, pdf maybe invalid or corrupted."
 			_ArrayInsert($summary, $i, $tmpstr, 0, @CRLF, @TAB)
 			ContinueLoop ;loop next pdf file.
