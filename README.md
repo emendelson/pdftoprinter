@@ -5,7 +5,9 @@ This application is described in detail here:
 
 https://mendelson.org/pdftoprinter.html
 
-This respository includes the files needed for compiling and running the application. They should be copied to the same folder that contains the au3 file.
+This respository includes the files needed for compiling and running the application. They should be copied to the same folder that contains the au3 file. 
+
+Note that this application includes the freely-distributable but copyrighted commercial software PDF-Xchange Viewer from Tracker Software.
 
 19 October 2024: The compiled version of the app and the source code now require 64-bit Windows. The older 32-bit version of the app and source code are still available; both have `32` in their filenames.
 
