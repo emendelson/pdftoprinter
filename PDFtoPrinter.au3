@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=pdftoprinter.ico
 #AutoIt3Wrapper_Outfile=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_Description=PDFtoPrinter.exe
-#AutoIt3Wrapper_Res_Fileversion=2.0.3.219
+#AutoIt3Wrapper_Res_Fileversion=2.0.3.220
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=PDFtoPrinter.exe
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -103,7 +103,7 @@ If $cmln = 0 Then    ;If no paramters given
 			 & "default when filename includes wildcard)." _
 			 & @CRLF & @CRLF & "/s   Run silently; disable user interaction and focus=" _
 			 & @CRLF & @CRLF & "/csv   Generate csv file listing file(s) printed. " _
-			 & "CSV file written to %temp%\pdftoprintertmp." _
+			 & "CSV file written to %temp%\PDFPrinterTmp." _
 			 & @CRLF & @CRLF & "/mock   Generate csv file only; don't print PDF files." _
 			 & @CRLF & @CRLF & "/Rn   Recursive directory listing to n depth of subfolders; " _
 			 & "if n is absent, recurs through all subfolders." _
