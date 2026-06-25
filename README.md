@@ -1,6 +1,13 @@
 # pdftoprinter
 AutoIt project for a PDF-to-printer application for Windows.
 
+**Experimenatally replaced with a C-language executable
+that needs no external helper, as this version does:**
+
+https://github.com/emendelson/pdftoprinter-c
+
+--------------------------------------------------------
+
 Also installable with `winget install pdftoprinter`.
 
 This application is described in detail here:
